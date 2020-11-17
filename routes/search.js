@@ -3,17 +3,18 @@ const router = express.Router()
 
 router.get('/', (req, res, next) => {
     var data = {
-        title: 'Search',
+        title: 'ML Search',
         content: "Input keyword"
     };
     res.render('search', data);
 });
 
-router.post('/post', (req, res, next) => {
-    var keyword = req.body['keyword'];
+router.post('/result', (req, res, next) => {
+    var keyword_str = req.body['keyword'];
+    var keyword_list = keyword_str.split('\s');
     var data = {
-        title: 'Search',
-        content: keyword
+        title: 'ML Search',
+        content: 'Search result about [' + keyword_list + '].' 
     };
     res.render('search', data)
 });
