@@ -13,6 +13,9 @@
     "http-errors": "~1.6.3",
     "isomorphic-fetch": "^3.0.0",
     "morgan": "~1.9.1",
+    "node-fetch": "^2.6.1",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9",
     "sparql-http-client": "^2.2.2"
   }
 }
