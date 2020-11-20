@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type"
+        content="text/html; charset=UTF-8">
+        <title><%= title %></title>
+        <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        crossorigin='anonymous'>
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+    </head>
+    <body class='container'>
+        <header>
+            <h1 class='display-4'>
+                <%= title %>
+            </h1>
+        </header>
+        <div role='main'>
+            <p class='h6'><%- content %></p>
+            <form method='post' action='/search/result'>
+                <div class="form-group">
+                    <label for='keyword'>Keyword:</label>
+                    <input type='text' name='keyword' id='keyword' class='form-control'>
+                </div>
+                <input type='submit' value='search' class='btn btn-primary'>
+            </form>
+            <p class='h6'><%- results %></p>
+        </div>
+    </body>
+</html>
