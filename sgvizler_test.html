@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <title>MWE</title>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.js"></script>
+      <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+      <script type="text/javascript" src="http://mgskjaeveland.github.io/sgvizler/v/0.6/sgvizler.js"></script>
+      <script type="text/javascript">
+        sgvizler.prefix("base", "http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/")
+        sgvizler.prefix("schema", "https://schema.org/")
+        sgvizler.prefix("email", "http://www.w3.org/2000/10/swap/pim/email#")
+        sgvizler.prefix("wd", "http://www.wikidata.org/entity/")
+        sgvizler.prefix("itsrdf", "https://www.w3.org/2005/11/its/rdf#")
+        sgvizler.prefix("olia", "http://purl.org/olia/olia.owl#")
+        sgvizler.prefix("nif", "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#")
+        sgvizler.prefix("nerd", "http://nerd.eurecom.fr/ontology#")
+        sgvizler.prefix("foaf", "http://xmlns.com/foaf/0.1/")
+        sgvizler.prefix("xsd", "http://www.w3.org/2001/XMLSchema#")
+        sgvizler.prefix("owl", "http://www.w3.org/2002/07/owl#")
+        sgvizler.prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#")
+        sgvizler.prefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+        sgvizler.prefix("marl", "http://www.gsi.dit.upm.es/ontologies/marl/ns#")
+        sgvizler.prefix("its", "http://www.w3.org/2005/11/its/rdf#")
+        </script>
+    </head>
+    <body>
+      <h1>Sgvizler MWE</h1>
+      <p>Please allow the page to load for a few seconds.</p>
+      <script type="text/javascript">
+      var Q = new sgvizler.Query();                           // Create a Query instance.
+      
+      // Values may also be set in the sgvizler object---but will be
+      // overwritten here.
+      Q.query("SELECT * {?s ?p ?o} LIMIT 10")
+          .endpointURL("http://localhost:3030/w3c-email/query")
+          .endpointOutputFormat("xml")                      // Possible values 'xml', 'json', 'jsonp'.
+          .chartFunction("google.visualization.Table")       // The name of the function to draw the chart.
+          .draw("myElementID");                              // Draw the chart in the designated HTML element.
+      </script>
+      <div id="myElementID"></div>
+    </body>
+  </html>
