@@ -27,7 +27,7 @@ var headers = {
     'Accept': 'application/sparql-results+json',
 };
 
-var dataString = 'SELECT * WHERE { ?s <http://www.w3.org/2000/01/rdf-schema#label> ?o . }LIMIT 10';
+var dataString = 'SELECT * {?s ?p ?o} LIMIT 10';
 
 var options = {
     method: 'POST',
