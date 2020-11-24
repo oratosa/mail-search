@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="content-type"
-        content="text/html; charset=UTF-8">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <title><%= title %></title>
         <link rel="stylesheet"
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         crossorigin='anonymous'>
-        <link rel='stylesheet' href='/stylesheets/style.css' />
+        <link rel='stylesheet' href='/stylesheets/style.css'/>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css"/> 
+        <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+        <script>
+            jQuery(function($){
+                $("#foo-table").DataTable({
+                    order: [],
+                });
+            });
+        </script>
     </head>
     <body class='container'>
         <header>
@@ -15,7 +24,7 @@
                 <%= title %>
             </h1>
         </header>
-        <div role='main'>
+        <div role='search'>
             <p class='h6'><%- content %></p>
             <form method='post' action='/search/result'>
                 <div class="form-group">
@@ -24,7 +33,45 @@
                 </div>
                 <input type='submit' value='search' class='btn btn-primary'>
             </form>
-            <p class='h6'><%- results %></p>
+        </div>
+        <div role='main'>
+            <h2 class="text text-success"> 
+                Search Results
+            </h2>
+            <table id="foo-table" class="table table-bordered">
+                <thead> 
+                    <tr> 
+                        <th data-field="file"> 
+                            <%= head.vars[0] %> 
+                        </th> 
+                        <th data-field="headline"> 
+                            <%= head.vars[1] %> 
+                        </th>
+                        <th data-field="anchorText"> 
+                            <%= head.vars[2] %>
+                        </th>
+                        <th data-field="entity">
+                            <%= head.vars[3] %>
+                        </th>
+                    </tr> 
+                </thead>
+                <tbody>
+                    <% let rows = results.bindings %>
+                    <% for(let i = 0; i < rows.length; i++){ %>
+                        <% let row = rows[i]; %>
+                        <% let file = row[head.vars[0]]["value"]; %>
+                        <% let headline = row[head.vars[1]]["value"]; %>
+                        <% let anchorText = row[head.vars[2]] ? row[head.vars[2]]["value"] : null ; %>
+                        <% let entity = row[head.vars[3]] ? row[head.vars[3]]["value"] : null ; %>
+                        <tr>
+                            <td><%= file %></td>
+                            <td><%= headline %></td>
+                            <td><%= anchorText %></td>
+                            <td><a href="<%= entity %>"><%= entity %></a></td>
+                        </tr>
+                    <% } %>
+                </tbody> 
+            </table> 
         </div>
     </body>
 </html>

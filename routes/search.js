@@ -36,11 +36,13 @@ router.post('/result', (req, res1, next) => {
         return res2.json();
         })
         .then(json => {
-            console.log(JSON.stringify(json));
+            console.log(JSON.stringify(json.head));
+            console.log(JSON.stringify(json.results));
             data = {
                 title: 'ML Search',
-                content: 'Search result about [' + keyword + '].' ,
-                results: JSON.stringify(json),
+                content: 'Search result about [' + keyword + '].',
+                head: json.head,
+                results: json.results,
             };
             res1.render('result', data)
         })
