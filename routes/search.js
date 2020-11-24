@@ -14,7 +14,7 @@ const endpoint = 'http://localhost:3030/w3c-email/query';
 router.get('/', (req, res, next) => {
     var data = {
         title: 'ML Search',
-        content: "Input keyword",
+        content: "Input keywords",
     };
     res.render('search', data);
 });
@@ -40,7 +40,7 @@ router.post('/result', (req, res1, next) => {
             console.log(JSON.stringify(json.results));
             data = {
                 title: 'ML Search',
-                content: 'Search result about [' + keyword + '].',
+                keyword: keyword,
                 head: json.head,
                 results: json.results,
             };
