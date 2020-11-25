@@ -12,7 +12,7 @@
         <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
         <script>
             jQuery(function($){
-                $("#foo-table").DataTable({
+                $("#search-result").DataTable({
                     order: [],
                 });
             });
@@ -24,7 +24,7 @@
                 <%= title %>
             </h1>
         </header>
-        <div role='search'>
+        <section class='search'>
             <h4 class="text text-primary">
                 Input Keywords
             </h4>
@@ -32,47 +32,75 @@
                 <div class="form-group">
                     <input type='text' name='keyword' id='keyword' class='form-control'>
                 </div>
-                <input type='submit' value='search' class='btn btn-primary'>
+                <input type='submit' value='Search' class='btn btn-primary'>
             </form>
-        </div>
-        <div role='main'>
+        </section>
+        <section class='main'>
             <h2 class="text text-success"> 
                 Search Results: <%= keyword %>
             </h2>
-            <table id="foo-table" class="table table-bordered">
-                <thead> 
-                    <tr> 
-                        <th data-field="file"> 
-                            <%= head.vars[0] %> 
-                        </th> 
-                        <th data-field="headline"> 
-                            <%= head.vars[1] %> 
-                        </th>
-                        <th data-field="anchorText"> 
-                            <%= head.vars[2] %>
-                        </th>
-                        <th data-field="entity">
-                            <%= head.vars[3] %>
-                        </th>
-                    </tr> 
-                </thead>
-                <tbody>
-                    <% let rows = results.bindings %>
-                    <% for(let i = 0; i < rows.length; i++){ %>
-                        <% let row = rows[i]; %>
-                        <% let file = row[head.vars[0]]["value"]; %>
-                        <% let headline = row[head.vars[1]]["value"]; %>
-                        <% let anchorText = row[head.vars[2]] ? row[head.vars[2]]["value"] : null ; %>
-                        <% let entity = row[head.vars[3]] ? row[head.vars[3]]["value"] : null ; %>
-                        <tr>
-                            <td><%= file %></td>
-                            <td><%= headline %></td>
-                            <td><%= anchorText %></td>
-                            <td><a href="<%= entity %>"><%= entity %></a></td>
-                        </tr>
-                    <% } %>
-                </tbody> 
-            </table> 
-        </div>
+                <table id="search-result" class="table table-bordered">
+                    <thead> 
+                        <tr> 
+                            <th data-field="file"> 
+                                <%= head.vars[0] %> 
+                            </th> 
+                            <th data-field="headline"> 
+                                <%= head.vars[1] %> 
+                            </th>
+                            <th data-field="anchorText"> 
+                                <%= head.vars[2] %>
+                            </th>
+                            <th data-field="entity">
+                                <%= head.vars[3] %>
+                            </th>
+                        </tr> 
+                    </thead>
+                    <tbody>
+                        <% let rows = results.bindings; %>
+                        <% let files = []; %>
+                        <% for(let i = 0; i < rows.length; i++){ %>
+                            <% let row = rows[i]; %>
+                            <% let file = row[head.vars[0]]["value"]; %>
+                            <% files.push(file); %>
+                            <% let headline = row[head.vars[1]]["value"]; %>
+                            <% let anchorText = row[head.vars[2]] ? row[head.vars[2]]["value"] : null ; %>
+                            <% let entity = row[head.vars[3]] ? row[head.vars[3]]["value"] : null ; %>
+                            <tr>
+                                <td><%= file %></td>
+                                <td><%= headline %></td>
+                                <td><%= anchorText %></td>
+                                <td><a href="<%= entity %>"><%= entity %></a></td>
+                            </tr>
+                        <% } %>
+                    </tbody> 
+                </table>
+                <form id='info'>
+                    <input type="hidden" name="files" value="<%= files %>">
+                    <input type='button' value='Relevant People' class='btn btn-primary' onclick="clickBtn1()">
+                </form>
+            <script>
+                async function clickBtn1(){
+                    const info = new FormData(document.getElementById('info'));
+                    //const files = document.getElementById("files").value;
+                    console.log(info)
+
+                    await fetch("/search/result/api/person",{ //URL
+			            method: 'POST', //POSTを指定
+			            body: info,
+                    })
+                    .then(function(response1) { //成功時に実行される
+			            console.log("status=" + response1.status); //status=200
+			            return response1.json();
+                    })
+                    .then(function(data1) { //成功時に実行される
+			            console.log(JSON.stringify(data1)); //JSONを出力
+		            })
+		            .catch(function(err1) { //失敗時に実行される
+			            console.log("err=" + err1);
+		            });
+                };
+            </script>
+        </section>
     </body>
 </html>
