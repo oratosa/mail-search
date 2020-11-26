@@ -51,9 +51,7 @@ router.post('/result', (req, res1, next) => {
 });
 
 router.post('/result/api/person', (req, res1, next) => {
-    let files = 'lists-078-12622907,lists-086-9170941';
-    //let files = req.body.files;
-    console.log(files);
+    let files = req.body['files'];
     let query = personSearchQueryGenerator(files);
     let options = {
         method: 'POST',
@@ -63,9 +61,9 @@ router.post('/result/api/person', (req, res1, next) => {
     fetch(endpoint,options)
         .then(res2 => {if (!res2.ok) {
         // 200 系以外のレスポンスはエラーとして処理
-        throw new Error(`${res2.status} ${res2.statusText}`);
+            throw new Error(`${res2.status} ${res2.statusText}`);
         }
-        return res2.json();
+            return res2.json();
         })
         .then(json => {
             console.log(JSON.stringify(json.head));

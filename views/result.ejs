@@ -18,13 +18,15 @@
             });
         </script>
     </head>
-    <body class='container'>
+    <body id='container'>
+        <!-- サービス名 -->
         <header>
             <h1 class='display-4'>
                 <%= title %>
             </h1>
         </header>
-        <section class='search'>
+        <!-- 文書検索機能 -->
+        <section id='search'>
             <h4 class="text text-primary">
                 Input Keywords
             </h4>
@@ -35,7 +37,8 @@
                 <input type='submit' value='Search' class='btn btn-primary'>
             </form>
         </section>
-        <section class='main'>
+        <!-- 文書検索結果 -->
+        <section id='result'>
             <h2 class="text text-success"> 
                 Search Results: <%= keyword %>
             </h2>
@@ -75,31 +78,43 @@
                         <% } %>
                     </tbody> 
                 </table>
-                <form id='info'>
-                    <input type="hidden" name="files" value="<%= files %>">
-                    <input type='button' value='Relevant People' class='btn btn-primary' onclick="clickBtn1()">
-                </form>
+        </section>
+        <!-- 関連情報1：誰と誰が議論しているか -->
+        <section id='additional-info'>
+            <form id='retrieve_people'>
+                <input type="hidden" name="files" id="files" value="<%= files %>">
+                <input type='button' value='Relevant People' class='btn btn-primary' onclick="clickBtn1()">
+            </form>
+            <!-- スクリプト -->
             <script>
                 async function clickBtn1(){
-                    const info = new FormData(document.getElementById('info'));
-                    //const files = document.getElementById("files").value;
-                    console.log(info)
+                    const files = document.getElementById('files').value;
+                    console.log(files);
+                    console.log(typeof files);
 
-                    await fetch("/search/result/api/person",{ //URL
-			            method: 'POST', //POSTを指定
-			            body: info,
-                    })
+                    let data = { 'files' : files };
+
+                    await postData("/search/result/api/person", data )
                     .then(function(response1) { //成功時に実行される
-			            console.log("status=" + response1.status); //status=200
-			            return response1.json();
+                        console.log("status=" + response1.status); //status=200
+                        return response1.json();
                     })
                     .then(function(data1) { //成功時に実行される
-			            console.log(JSON.stringify(data1)); //JSONを出力
-		            })
-		            .catch(function(err1) { //失敗時に実行される
-			            console.log("err=" + err1);
-		            });
+                        console.log(JSON.stringify(data1)); //JSONを出力
+                    })
+                    .catch(function(err1) { //失敗時に実行される
+                        console.log("err=" + err1);
+                    });
                 };
+
+                async function postData(url = '', data = {}) {
+                    const response = await fetch(url, {
+                        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data) // 本文のデータ型は "Content-Type" ヘッダーと一致する必要があります
+                    })
+                    return response;
+                    };
             </script>
         </section>
     </body>
