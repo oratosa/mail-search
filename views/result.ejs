@@ -35,7 +35,8 @@
             </h4>
             <form method='post' action='/search/result'>
                 <div class="form-group">
-                    <input type='text' name='keyword' id='keyword' class='form-control'>
+                    <% let saved_keyword = keyword %>
+                    <input type='text' name='keyword' id='keyword' value='<%= saved_keyword %>' class='form-control'>
                 </div>
                 <input type='submit' value='Search' class='btn btn-primary'>
             </form>
@@ -43,7 +44,7 @@
         <!-- 文書検索結果 -->
         <section id='result'>
             <h2 class="text text-success"> 
-                Search Results: <%= keyword %>
+                Search Results: "<%= saved_keyword %>"
             </h2>
                 <table id="search-result" class="table table-bordered">
                     <thead> 
