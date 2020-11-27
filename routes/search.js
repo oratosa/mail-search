@@ -73,18 +73,11 @@ router.post('/result/api/person', (req, res1, next) => {
             const head = json.head;
             const results = json.results;
             let template = `
-            <script>
-            jQuery(function($){
-                $("#relevant-people").DataTable({
-                    order: [],
-                });
-            });
-            </script>
             <div>
             <h2 class="text text-success"> 
                 Relevant People
             </h2>
-                <table id="relevant-people" class="table table-bordered">
+                <table id="who-table" class="table table-bordered">
                     <thead> 
                         <tr> 
                             <th data-field="fromWho"> 
