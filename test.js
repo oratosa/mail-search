@@ -1,64 +1,39 @@
-/*
-const fetch = require('node-fetch');
+const ejs = require('ejs');
 
-const headers = {
-    'Content-Type': 'application/sparql-query',
-    'Accept': 'application/sparql-results+json',
-};
-
-
-function queryToEndpoint(query){
-    return new Promise((resolve, reject) => {
-        let options = {
-            url: 'http://localhost:3030/w3c-email/query',
-            method: 'POST',
-            headers: headers,
-            body: query,
-        };
-        fetch(options, callback => {})
-    }
-}
-*/
-
-var fetch = require('node-fetch');
-
-var headers = {
-    'Content-Type': 'application/sparql-query',
-    'Accept': 'application/sparql-results+json',
-};
-
-var dataString = 'SELECT * {?s ?p ?o} LIMIT 10';
-
-var options = {
-    method: 'POST',
-    headers: headers,
-    body: dataString,
-};
-
-fetch('http://localhost:3030/w3c-email/query',options)
-    .then(res2 => {if (!res2.ok) {
-        // 200 系以外のレスポンスはエラーとして処理
-        throw new Error(`${res2.status} ${res2.statusText}`);
-      }
-      return res2.json();
-    })
-    // これがレスポンス本文のテキスト
-    .then(json => {
-        console.log(json);
-        return json})
-    // エラーはここでまとめて処理
-    .catch(err => console.error(err));
-        //console.log(res));
-    //.then(json => console.log(JSON.stringify(json)));
-
-/*
-
-function callback(error, response, body) {
-    if (!error && response.statusCode == 200) {
-        console.log(body);
-        }
-}
-
-request(options, callback);
-
-*/
+const head = {"vars":["fromWho","toWho"]};
+const results = {"bindings":[{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Al_Gilman"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Al_Gilman"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Dominique_Haza_l_Massieux"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Charles_McCathieNevile"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Charles_McCathieNevile"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/David_Woolley"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Charles_McCathieNevile"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Judy_Schnitzer"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Charles_McCathieNevile"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Mike_Rundle"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Dan_Brickley"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Dan_Connolly"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Daniel_Dardailler"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Dominique_Haza_l_Massieux"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Al_Gilman"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Ian_B__Jacobs"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Paul_Pedersen"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Intro_Interactive"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Janet_Daly"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Ian_B__Jacobs"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/John_Foliot___WATS_ca"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Jonathan_Chetwynd"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Judy_Schnitzer"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Karl_Hebenstreit__Jr_"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Karl_Hebenstreit__Jr_"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Karl_Hebenstreit__Jr_"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Karl_Hebenstreit__Jr_"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Olle_Olsson"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Kathleen_Anderson"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Leslie_K__Yoder"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/John_Foliot___WATS_ca"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Michael_Mauch"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Mike_Rundle"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Leslie_K__Yoder"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Olle_Olsson"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Karl_Hebenstreit__Jr_"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Robert_Neff"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Wendy_A_Chisholm"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Roberto_Scano___IWA_HWG"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Sean_B__Palmer"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Surfer_s_Choice"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Susan_Lesch"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Tom_Croucher"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Wendy_A_Chisholm"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Wendy_A_Chisholm"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/karl_hebenstreit_gsa_gov"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/clip_image002_gif"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/danbri_fireball_danbri_org"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/email_packet"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/islamconvert_ummah_org"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/karl_hebenstreit_gsa_gov"}},{"fromWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/lynn_alford"},"toWho":{"type":"uri","value":"http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/Jonathan_Chetwynd"}}]};
+let template = `
+<div>
+<h2 class="text text-success"> 
+    Relevant People
+</h2>
+    <table id="relevant-people" class="table table-bordered">
+        <thead> 
+            <tr> 
+                <th data-field="fromWho"> 
+                    <% let fromWho = head.vars[0] %>
+                    <%= fromWho %> 
+                </th> 
+                <th data-field="toWho"> 
+                    <% let toWho = head.vars[1] %>
+                    <%= toWho %> 
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% let rows = results.bindings; %>
+            <% for(let i = 0; i < rows.length; i++){ %>
+                <% let row = rows[i]; %>
+                <% let fromWho = row.fromWho ?row.fromWho["value"] : null ; %>
+                <% let toWho = row.toWho ? row.toWho["value"] : null ; %>
+                <tr>
+                    <td><%= fromWho %></td>
+                    <td><%= toWho %></td>
+                </tr>
+            <% } %>
+        </tbody> 
+    </table>
+</div>
+`;
+const html = ejs.render(template, { head: head, results: results });
+console.info(html);
