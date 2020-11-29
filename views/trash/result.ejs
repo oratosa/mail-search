@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <title><%= title %></title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.0/dist/bootstrap-table.min.css">
+    </head>
+    <body id='container'>
+        <!-- サービス名 -->
+        <header>
+            <h1 class='display-4'>
+                <%= title %>
+            </h1>
+        </header>
+        <!-- 文書検索機能 -->
+        <section id='search'>
+            <h4 class="text text-primary">
+                Input Keywords
+            </h4>
+            <form method='post' action='/search/result'>
+                <div class="form-group">
+                    <input type='text' name='keyword' id='keyword' class='form-control'>
+                </div>
+                <input type='submit' value='Search' class='btn btn-primary'>
+            </form>
+        </section>
+        <!-- 文書検索結果 -->
+        <section id='result'>
+            <h2 class="text text-success"> 
+                Search Results: <%= keyword %>
+            </h2>
+                <table data-toggle="table" data-pagination="true">
+                    <thead> 
+                        <tr> 
+                            <th data-field="file"> 
+                                <%= head.vars[0] %> 
+                            </th> 
+                            <th data-field="headline"> 
+                                <%= head.vars[1] %> 
+                            </th>
+                            <th data-field="anchorText"> 
+                                <%= head.vars[2] %>
+                            </th>
+                            <th data-field="entity">
+                                <%= head.vars[3] %>
+                            </th>
+                        </tr> 
+                    </thead>
+                    <tbody>
+                        <% let rows = results.bindings; %>
+                        <% let files = []; %>
+                        <% for(let i = 0; i < rows.length; i++){ %>
+                            <% let row = rows[i]; %>
+                            <% let file = row[head.vars[0]]["value"]; %>
+                            <% files.push(file); %>
+                            <% let headline = row[head.vars[1]]["value"]; %>
+                            <% let anchorText = row[head.vars[2]] ? row[head.vars[2]]["value"] : null ; %>
+                            <% let entity = row[head.vars[3]] ? row[head.vars[3]]["value"] : null ; %>
+                            <tr>
+                                <td><%= file %></td>
+                                <td><%= headline %></td>
+                                <td><%= anchorText %></td>
+                                <td><a href="<%= entity %>"><%= entity %></a></td>
+                            </tr>
+                        <% } %>
+                    </tbody> 
+                </table>
+        </section>
+        <!-- 関連情報1：誰と誰が議論しているか -->
+        <section id='additional-info'>
+            <form id='retrieve_people'>
+                <input type="hidden" name="files" id="files" value="<%= files %>">
+                <input type='button' value='Relevant People' class='btn btn-primary' onclick="clickBtn1()">
+            </form>
+            <div id='test'></div>
+            <!-- スクリプト -->
+            <script>
+                async function clickBtn1(){
+                    const files = document.getElementById('files').value;
+                    // console.log(files);
+                    // console.log(typeof files);
+
+                    let data = { 'files' : files };
+
+                    await postData("/search/result/api/person", data )
+                    .then(function(response1) { //成功時に実行される
+                        console.log("status=" + response1.status); //status=200
+                        return response1.text()
+                    })
+                    .then(function(data1) { //成功時に実行される
+                        document.getElementById('test').innerHTML = data1;
+                        //console.log(data1); //JSONを出力
+                    })
+                    .catch(function(err1) { //失敗時に実行される
+                        console.log("err=" + err1);
+                    });
+                };
+
+                async function postData(url = '', data = {}) {
+                    const response = await fetch(url, {
+                        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data) // 本文のデータ型は "Content-Type" ヘッダーと一致する必要があります
+                    })
+                    return response;
+                    };
+            </script>
+        </section>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.0/dist/bootstrap-table.min.js"></script>
+    </body>
+</html>
