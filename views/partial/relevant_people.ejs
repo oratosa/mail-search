@@ -1,0 +1,30 @@
+        <!-- 取得結果：誰と誰が議論しているか -->
+        <div>
+            <h2 class="text text-success"> 
+                Relevant People
+            </h2>
+                <table id="relevant-people" class="table table-bordered">
+                    <thead> 
+                        <tr> 
+                            <th data-field="fromWho"> 
+                                <%= head.vars[0] %> 
+                            </th> 
+                            <th data-field="toWho"> 
+                                <%= head.vars[1] %> 
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let rows = results.bindings; %>
+                        <% for(let i = 0; i < rows.length; i++){ %>
+                            <% let row = rows[i]; %>
+                            <% let fromWho = row[head.vars[0]]["fromWho"]; %>
+                            <% let toWho = row[head.vars[1]] ? row[head.vars[1]]["toWho"] : null ; %>
+                            <tr>
+                                <td><%= fromWho %></td>
+                                <td><%= toWho %></td>
+                            </tr>
+                        <% } %>
+                    </tbody> 
+                </table>
+            </div>
