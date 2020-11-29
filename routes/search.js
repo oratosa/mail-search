@@ -79,7 +79,10 @@ router.post('/result/api/person', (req, res1, next) => {
             </h2>
                 <table id="who-table" class="table table-bordered">
                     <thead> 
-                        <tr> 
+                        <tr>
+                            <th data-field="check"> 
+                                Select
+                            </th> 
                             <th data-field="fromWho"> 
                                 <% let fromWho = head.vars[0] %>
                                 <%= fromWho %> 
@@ -97,6 +100,7 @@ router.post('/result/api/person', (req, res1, next) => {
                             <% let fromWho = row.fromWho ?row.fromWho["value"] : null ; %>
                             <% let toWho = row.toWho ? row.toWho["value"] : null ; %>
                             <tr>
+                                <td><input type="checkbox" class="chk" value=[<%= fromWho %>, <%= toWho %>]></td>
                                 <td><%= fromWho %></td>
                                 <td><%= toWho %></td>
                             </tr>
