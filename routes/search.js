@@ -38,8 +38,7 @@ router.post('/result', (req, res1, next) => {
             return res2.json();
         })
         .then(json => {
-            console.log(JSON.stringify(json.head));
-            console.log(JSON.stringify(json.results));
+            console.log(JSON.stringify(json));
             data = {
                 title: 'ML Search',
                 keyword: keyword,
