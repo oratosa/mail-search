@@ -126,6 +126,24 @@
                 
                 let table = new google.visualization.Table(document.getElementById('retrieve_people_result'));
                 table.draw(data, options);
+
+                // 選択した行の値を取得する
+                google.visualization.events.addListener(table, 'select', function() { // 参考情報: https://developers.google.com/chart/interactive/docs/reference#visgetselection
+                    let selection = table.getSelection(); // 選択したものが取得される
+                    let selected_cells = [];
+                    for (let i=0; i < selection.length; i++){
+                        let item = selection[i];
+                        let values = {
+                                "fromWho": data.getValue(item.row, 0),
+                                "toWho": data.getValue(item.row,1),
+                            };
+                        selected_cells.push(values);
+                    }
+                    if (selected_cells == []) {
+                        selected_cells = 'nothing';
+                    }
+                    console.log(selected_cells);
+                });
             };
         </script>
     </head>
