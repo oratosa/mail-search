@@ -68,55 +68,11 @@ router.post('/result/api/person', (req, res1, next) => {
         .then(json => {
             console.log(JSON.stringify(json.head));
             console.log(JSON.stringify(json.results));
-            // test //
-            const head = json.head;
-            const results = json.results;
-            let template = `
-            <div>
-            <h2 class="text text-success"> 
-                Relevant People
-            </h2>
-                <table id="who-table" class="table table-bordered">
-                    <thead> 
-                        <tr>
-                            <th data-field="check"> 
-                                Select
-                            </th> 
-                            <th data-field="fromWho"> 
-                                <% let fromWho = head.vars[0] %>
-                                <%= fromWho %> 
-                            </th> 
-                            <th data-field="toWho"> 
-                                <% let toWho = head.vars[1] %>
-                                <%= toWho %> 
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% let rows = results.bindings; %>
-                        <% for(let i = 0; i < rows.length; i++){ %>
-                            <% let row = rows[i]; %>
-                            <% let fromWho = row.fromWho ?row.fromWho["value"] : null ; %>
-                            <% let toWho = row.toWho ? row.toWho["value"] : null ; %>
-                            <tr>
-                                <td><input type="checkbox" class="chk" value=[<%= fromWho %>, <%= toWho %>]></td>
-                                <td><%= fromWho %></td>
-                                <td><%= toWho %></td>
-                            </tr>
-                        <% } %>
-                    </tbody> 
-                </table>
-            </div>
-            `;
-            const html = ejs.render(template, { head: head, results: results });
-            res1.send(html);
-            /* testのためコメントアウト
             data = {
                 head: json.head,
                 results: json.results,
             };
             res1.json(data);
-            */
         })
         .catch(err => console.error(err));
 });

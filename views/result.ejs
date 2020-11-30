@@ -11,9 +11,9 @@
         <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script> -->
         <script type="text/javascript">
             google.load('visualization', '1', {packages:['table']});
-            google.setOnLoadCallback(drawTable);
+            google.setOnLoadCallback(drawDocumentSearchResultTable);
             
-            function drawTable() {
+            function drawDocumentSearchResultTable() {
                 // テーブルの設定
                 let data = new google.visualization.DataTable();
                 data.addColumn('string','<%- head.vars[0] %>'); // ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする
@@ -57,12 +57,76 @@
                 <form id='retrieve_people'>
                     <input type="hidden" name="files" id="files" value=` + files + `>
                     <input type='button' value='Relevant People' class='btn btn-primary' onclick="clickBtn1()">
+                    <input type='button' value='Relevant Entities' class='btn btn-primary' onclick="clickBtn2()">
                 </form>
+                <div id='retrieve_people_result'>
+                </div>
                 `;
 
                 document.getElementById('result').insertAdjacentHTML('afterend', html);
 
-            }
+            };
+        </script>
+        <script>
+            async function clickBtn1(){
+                const files = document.getElementById('files').value;
+                // console.log(files);
+                // console.log(typeof files);
+                let data = { 'files' : files };
+                await postData("/search/result/api/person", data )
+                    .then(function(response1) { //成功時に実行される
+                        console.log("status=" + response1.status); //status=200
+                        return response1.json();
+                    })
+                    .then(function(data1) { //成功時に実行される
+                        console.log(data1); //確認のため
+
+                        // テーブル作成
+                        google.load('visualization', '1', {packages:['table']});
+                        google.setOnLoadCallback(drawPeopleResultTable(data1));
+
+                    })
+                    .catch(function(err1) { //失敗時に実行される
+                        console.log("err=" + err1);
+                    });
+                };
+
+            async function postData(url = '', data = {}) {
+                const response = await fetch(url, {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data) // 本文のデータ型は "Content-Type" ヘッダーと一致する必要があります
+                    })
+                return response;
+                };
+
+            function drawPeopleResultTable(json) {
+                // テーブルの設定
+                let data = new google.visualization.DataTable();
+                data.addColumn('string',json.head.vars[0]); // ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする
+                data.addColumn('string',json.head.vars[1]);
+                
+                // JSONで取得したデータを整形する
+                let rows = json.results.bindings; // ejsで渡されたデータを呼び込む
+                let addRows = [];
+                for(let i = 0; i < rows.length; i++){
+                    let fromWho = rows[i].fromWho ? rows[i].fromWho["value"] : null ;
+                    let toWho = rows[i].toWho ? rows[i].toWho["value"] : null ;
+                    let row = [fromWho, toWho];
+                    addRows.push(row);
+                };
+                data.addRows(addRows);
+
+                let options = {
+                    page: 'enable', // ページ分割を有効
+                    pageSize: 5,    // 1 ページの項目数
+                    showRowNumber: true,
+                    allowHtml: true,
+                };
+                
+                let table = new google.visualization.Table(document.getElementById('retrieve_people_result'));
+                table.draw(data, options);
+            };
         </script>
     </head>
     <body id='container'>
