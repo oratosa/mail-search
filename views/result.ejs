@@ -37,7 +37,6 @@
                 data.addRows(addRows);
 
                 let options = {
-                    title: 'Search Results: "<%= keyword %>"',
                     page: 'enable', // ページ分割を有効
                     pageSize: 5,    // 1 ページの項目数
                     showRowNumber: true,
@@ -54,12 +53,14 @@
 
                 html = 
                 `
-                <form id='retrieve_people'>
+                <form id='relevant_infomation'>
                     <input type="hidden" name="files" id="files" value=` + files + `>
-                    <input type='button' value='Relevant People' class='btn btn-primary' onclick="clickBtn1()">
-                    <input type='button' value='Relevant Entities' class='btn btn-primary' onclick="clickBtn2()">
+                    <input type='button' value='Get Relevant People' class='btn btn-primary' onclick="clickBtn1()">
+                    <input type='button' value='Get Relevant Entities' class='btn btn-primary' onclick="clickBtn2()">
                 </form>
-                <div id='retrieve_people_result'>
+                <div id='relevant_people'>
+                </div>
+                <div id='relevant_entities'>
                 </div>
                 `;
 
@@ -124,11 +125,14 @@
                     allowHtml: true,
                 };
                 
-                let table = new google.visualization.Table(document.getElementById('retrieve_people_result'));
+                let table = new google.visualization.Table(document.getElementById('relevant_people'));
                 table.draw(data, options);
 
                 // 選択した行の値を取得する
                 google.visualization.events.addListener(table, 'select', function() { // 参考情報: https://developers.google.com/chart/interactive/docs/reference#visgetselection
+                    if (document.getElementById('keyword-plus-people')){
+                        document.getElementById('keyword-plus-people').remove();
+                    }; // 初期化
                     let selection = table.getSelection(); // 選択したものが取得される
                     let selected_cells = [];
                     for (let i=0; i < selection.length; i++){
@@ -138,11 +142,20 @@
                                 "toWho": data.getValue(item.row,1),
                             };
                         selected_cells.push(values);
-                    }
-                    if (selected_cells == []) {
-                        selected_cells = 'nothing';
-                    }
-                    console.log(selected_cells);
+                        };
+                    let input_values ={
+                        keyword: '<%= keyword %>',
+                        selected_cells: selected_cells,
+                    };
+                    console.log(input_values);
+                    let html = 
+                    `
+                    <form method='post' action='/search/result' id='keyword-plus-people'>
+                        <input type='hidden' name='keyword-plus-people' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        <input type='submit' value='Filter' class='btn btn-primary'>
+                    </form>
+                    `;
+                    document.getElementById('relevant_people').insertAdjacentHTML('afterend', html); 
                 });
             };
         </script>
@@ -160,10 +173,8 @@
                 Input Keywords
             </h4>
             <form method='post' action='/search/result'>
-                <div class="form-group">
-                    <% let saved_keyword = keyword %>
-                    <input type='text' name='keyword' id='keyword' value='<%= saved_keyword %>' class='form-control'>
-                </div>
+                <% let saved_keyword = keyword %>
+                <input type='text' name='keyword' id='keyword' value='<%= saved_keyword %>' class='form-control'>
                 <input type='submit' value='Search' class='btn btn-primary'>
             </form>
         </section>
