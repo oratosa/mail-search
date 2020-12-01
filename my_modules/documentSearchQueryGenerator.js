@@ -1,5 +1,5 @@
 function documentSearchQueryGenerator(keyword){
-    var prefix = `
+    let prefix = `
                     PREFIX base: <http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/>
                     PREFIX schema: <https://schema.org/>
                     PREFIX email: <http://www.w3.org/2000/10/swap/pim/email#>
@@ -16,14 +16,14 @@ function documentSearchQueryGenerator(keyword){
                     PREFIX marl: <http://www.gsi.dit.upm.es/ontologies/marl/ns#>
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `
-    var select = `
+    let select = `
                     SELECT distinct ?file ?headline ?anchorText ?entity
                     WHERE{
                     {?email schema:alternateName ?file;
                             schema:headline ?headline;
                             schema:text ?text.
                 `
-    var optional = `
+    let optional = `
                     OPTIONAL{?email schema:mentions ?mention.
                                 ?mention nif:isString ?anchorText.
                                 FILTER regex(?anchorText,'`+ keyword +`', 'i')
@@ -32,20 +32,32 @@ function documentSearchQueryGenerator(keyword){
                     }ORDER BY DESC (?anchorText)
                     `
     // 検索キーワードを分解して単語ごとにテキスト検索をする節をつくる
-    var keyword_list = keyword.split(/\s/)
-    var filter = []
+    let keyword_list = keyword.split(/\s/);
+    let filter = [];
     for (let word of keyword_list){
         filter.push(`FILTER regex(?text,'`+ word +`','i')`)
     }
 
     // すべてのクエリの節を結合し，一つの文書検索クエリを生成する
-    var query = prefix + select + filter.join('\n') + optional
 
-    return query
+    /*
+    if (keyword == ''){
+        let query = prefix + select.replace('?anchorText ?entity','') + filter.join('\n') + optional;
+        console.log(query);
+        return query;
+    }else{
+        let query = prefix + select + filter.join('\n') + optional;
+        console.log(query);
+        return query;
+    }
+    */
+    let query = prefix + select + filter.join('\n') + optional;
+
+    console.log(query);
+
+    return query;
 }
 
-module.exports = documentSearchQueryGenerator
+module.exports = documentSearchQueryGenerator;
 
-/* test
-documentSearchQueryGenerator('google logo')
-*/
+// documentSearchQueryGenerator('');
