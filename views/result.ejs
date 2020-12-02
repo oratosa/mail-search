@@ -6,13 +6,33 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin='anonymous'>
         <link rel='stylesheet' href='/stylesheets/style.css'/>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-        <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css"/> 
-        <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script> -->
-        <script type="text/javascript">
+    </head>
+    <body id='container'>
+        <!-- サービス名 -->
+        <header>
+            <h1 class='display-4'>
+                <%= title %>
+            </h1>
+        </header>
+        <!-- 文書検索機能 -->
+        <section id='search'>
+            <h4 class="text text-primary">
+                Input Keywords
+            </h4>
+            <form method='post' action='/search/result'>
+                <input type='text' name='keyword' id='keyword' value='<%= keyword %>' class='form-control' required>
+                <input type='submit' value='Search' class='btn btn-primary'>
+            </form>
+        </section>
+        <!-- 文書検索結果 -->
+        <h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>
+        <section id='result'>
+        </section>
+    <!-- javascript -->
+        <script type="text/javascript"> // * 1 * キーワード検索による文書検索結果を表示するための処理 //
             google.load('visualization', '1', {packages:['table']});
             google.setOnLoadCallback(drawDocumentSearchResultTable);
-            
+
             function drawDocumentSearchResultTable() {
                 // テーブルの設定
                 let data = new google.visualization.DataTable();
@@ -38,7 +58,7 @@
 
                 let options = {
                     page: 'enable', // ページ分割を有効
-                    pageSize: 5,    // 1 ページの項目数
+                    pageSize: 10,    // 1 ページの項目数
                     showRowNumber: true,
                     allowHtml: true,
                 };
@@ -68,7 +88,7 @@
 
             };
         </script>
-        <script>
+        <script type="text/javascript"> // * 2 * 誰と誰がやりとりしているかを表示するための処理 //
             async function clickBtn1(){
                 const files = document.getElementById('files').value;
                 // console.log(files);
@@ -92,15 +112,6 @@
                     });
                 };
 
-            async function postData(url = '', data = {}) {
-                const response = await fetch(url, {
-                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data) // 本文のデータ型は "Content-Type" ヘッダーと一致する必要があります
-                    })
-                return response;
-                };
-
             function drawPeopleResultTable(json) {
                 // テーブルの設定
                 let data = new google.visualization.DataTable();
@@ -120,7 +131,7 @@
 
                 let options = {
                     page: 'enable', // ページ分割を有効
-                    pageSize: 5,    // 1 ページの項目数
+                    pageSize: 10,    // 1 ページの項目数
                     showRowNumber: true,
                     allowHtml: true,
                 };
@@ -144,14 +155,19 @@
                         selected_cells.push(values);
                         };
                     let input_values ={
-                        keyword: '<%= keyword %>',
+                        keyword: document.getElementById('keyword').value,
                         selected_cells: selected_cells,
                     };
+                    
+                    if (input_values.keyword == ''){
+                        alert('Keyword is empty!');
+                    };
+
                     console.log(input_values);
                     let html = 
                     `
                     <form method='post' action='/search/result' id='keyword-plus-people'>
-                        <input type='hidden' name='keyword-plus-people' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        <input type='hidden' name='keyword_plus_people' value='` + JSON.stringify(input_values) + `' class='form-control'>
                         <input type='submit' value='Filter' class='btn btn-primary'>
                     </form>
                     `;
@@ -159,28 +175,104 @@
                 });
             };
         </script>
-    </head>
-    <body id='container'>
-        <!-- サービス名 -->
-        <header>
-            <h1 class='display-4'>
-                <%= title %>
-            </h1>
-        </header>
-        <!-- 文書検索機能 -->
-        <section id='search'>
-            <h4 class="text text-primary">
-                Input Keywords
-            </h4>
-            <form method='post' action='/search/result'>
-                <% let saved_keyword = keyword %>
-                <input type='text' name='keyword' id='keyword' value='<%= saved_keyword %>' class='form-control'>
-                <input type='submit' value='Search' class='btn btn-primary'>
-            </form>
-        </section>
-        <!-- 文書検索結果 -->
-        <h2 class="text text-success"> Search Results: "<%= saved_keyword %>" </h2>
-        <section id='result'>
-        </section>
+        <script type="text/javascript">
+            async function postData(url = '', data = {}) {
+                const response = await fetch(url, {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data) // 本文のデータ型は "Content-Type" ヘッダーと一致する必要があります
+                    })
+                return response;
+                };
+        </script>
+        <script type="text/javascript"> // * 3 * 関係するエンティティとそのエンティティに関する記述の数を表示するための処理 //
+            async function clickBtn2(){
+                const files = document.getElementById('files').value;
+                // console.log(files);
+                // console.log(typeof files);
+                let data = { 'files' : files };
+                await postData("/search/result/api/entity", data )
+                    .then(function(response1) { //成功時に実行される
+                        console.log("status=" + response1.status); //status=200
+                        return response1.json();
+                    })
+                    .then(function(data1) { //成功時に実行される
+                        console.log(data1); //確認のため
+
+                        // テーブル作成
+                        google.load('visualization', '1', {packages:['table']});
+                        google.setOnLoadCallback(drawEntityResultTable(data1));
+
+                    })
+                    .catch(function(err1) { //失敗時に実行される
+                        console.log("err=" + err1);
+                    });
+                };
+
+            function drawEntityResultTable(json) {
+                // テーブルの設定
+                let data = new google.visualization.DataTable();
+                data.addColumn('string',json.head.vars[0]); // ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする
+                data.addColumn('string',json.head.vars[1]);
+                data.addColumn('number',json.head.vars[2]);
+                
+                // JSONで取得したデータを整形する
+                let rows = json.results.bindings; // ejsで渡されたデータを呼び込む
+                let addRows = [];
+                for(let i = 0; i < rows.length; i++){
+                    let anchorText = rows[i].anchorText ? rows[i].anchorText["value"] : null ;
+                    let entity = rows[i].entity ? rows[i].entity["value"] : null ;
+                    let numberOfContexts = rows[i].numberOfContexts ? rows[i].numberOfContexts["value"] : null ;
+                    let row = [anchorText, entity, Number(numberOfContexts)];
+                    addRows.push(row);
+                };
+                data.addRows(addRows);
+
+                let options = {
+                    page: 'enable', // ページ分割を有効
+                    pageSize: 10,    // 1 ページの項目数
+                    showRowNumber: true,
+                    allowHtml: true,
+                };
+                
+                let table = new google.visualization.Table(document.getElementById('relevant_entities'));
+                table.draw(data, options);
+
+                // 選択した行の値を取得する
+                google.visualization.events.addListener(table, 'select', function() { // 参考情報: https://developers.google.com/chart/interactive/docs/reference#visgetselection
+                    if (document.getElementById('keyword-plus-entity')){
+                        document.getElementById('keyword-plus-entity').remove();
+                    }; // 初期化
+                    let selection = table.getSelection(); // 選択したものが取得される
+                    let selected_cells = [];
+                    for (let i=0; i < selection.length; i++){
+                        let item = selection[i];
+                        let values = {
+                                "anchorText": data.getValue(item.row, 0),
+                                "entity": data.getValue(item.row,1),
+                            };
+                        selected_cells.push(values);
+                        };
+                    let input_values ={
+                        keyword: document.getElementById('keyword').value,
+                        selected_cells: selected_cells,
+                    };
+                    
+                    if (input_values.keyword == ''){
+                        alert('Keyword is empty!');
+                    };
+
+                    console.log(input_values);
+                    let html = 
+                    `
+                    <form method='post' action='/search/result' id='keyword-plus-entity'>
+                        <input type='hidden' name='keyword_plus_entity' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        <input type='submit' value='Filter' class='btn btn-primary'>
+                    </form>
+                    `;
+                    document.getElementById('relevant_entity').insertAdjacentHTML('afterend', html); 
+                });
+            };
+        </script>
     </body>
 </html>
