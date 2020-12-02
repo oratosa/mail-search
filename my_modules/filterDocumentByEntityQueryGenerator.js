@@ -31,7 +31,7 @@ function filterDocumentByEntityQueryGenerator(keyword, selected_cells){ //select
                                 ?mention nif:isString ?anchorText.
                                 FILTER regex(?anchorText,'`+ keyword +`', 'i')
                                 ?mention itsrdf:taIdentRef ?entity.}
-                        }
+                    }
                     `
     let orderby = `
                     }ORDER BY DESC (?anchorText)

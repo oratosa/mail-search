@@ -88,6 +88,16 @@
 
             };
         </script>
+        <script type="text/javascript"> // fetchする処理 //
+            async function postData(url = '', data = {}) {
+                const response = await fetch(url, {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data) // 本文のデータ型は "Content-Type" ヘッダーと一致する必要があります
+                    })
+                return response;
+                };
+        </script>
         <script type="text/javascript"> // * 2 * 誰と誰がやりとりしているかを表示するための処理 //
             async function clickBtn1(){
                 const files = document.getElementById('files').value;
@@ -174,16 +184,6 @@
                     document.getElementById('relevant_people').insertAdjacentHTML('afterend', html); 
                 });
             };
-        </script>
-        <script type="text/javascript"> // fetchする処理 //
-            async function postData(url = '', data = {}) {
-                const response = await fetch(url, {
-                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data) // 本文のデータ型は "Content-Type" ヘッダーと一致する必要があります
-                    })
-                return response;
-                };
         </script>
         <script type="text/javascript"> // * 3 * 関係するエンティティとそのエンティティに関する記述の数を表示するための処理 //
             async function clickBtn2(){
@@ -273,13 +273,101 @@
                         <input type='submit' value='Filter' class='btn btn-primary'>
                     </form>
                     <form id='detail-infomation'>
-                        <input type="hidden" name="entities" id="entities" value='` + JSON.stringify(input_values) + `'>
+                        <input type="hidden" name="selectedEntities" id="selectedEntities" value='` + JSON.stringify(input_values) + `'>
                         <input type='button' value='Get Entity Details' class='btn btn-primary' onclick="clickBtn3()">
                     </form>
                     <div id='triples'>
                     </div>
                     `;
                     document.getElementById('relevant_entities').insertAdjacentHTML('afterend', html); 
+                });
+            };
+        </script>
+        <script type="text/javascript"> // 選択したエンティティに関する記述を表示するための処理 //
+            async function clickBtn3(){
+                let data = JSON.parse(document.getElementById('selectedEntities').value);
+                data["files"] = document.getElementById('files').value; // data = { 'keyword' : keyword, 'selected_cells' : [{ 'anchorText' : ~~, 'entity': ~~}, {...}, {...}], 'files':['lists-002-7903543','lists-002-6903543']}
+                await postData("/search/result/api/entity/triple", data )
+                    .then(function(response1) { //成功時に実行される
+                        console.log("status=" + response1.status); //status=200
+                        return response1.json();
+                    })
+                    .then(function(data1) { //成功時に実行される
+                        console.log(data1); //確認のため
+
+                        // テーブル作成
+                        google.load('visualization', '1', {packages:['table']});
+                        google.setOnLoadCallback(drawTripleResultTable(data1));
+
+                    })
+                    .catch(function(err1) { //失敗時に実行される
+                        console.log("err=" + err1);
+                    });
+                };
+
+            function drawTripleResultTable(json) {
+                // テーブルの設定
+                let data = new google.visualization.DataTable();
+                data.addColumn('string',json.head.vars[0]); // ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする
+                data.addColumn('string',json.head.vars[1]);
+                data.addColumn('string',json.head.vars[2]);
+                
+                // JSONで取得したデータを整形する
+                let rows = json.results.bindings; // ejsで渡されたデータを呼び込む
+                let addRows = [];
+                for(let i = 0; i < rows.length; i++){
+                    let subject = rows[i].subject ? rows[i].subject["value"] : null ;
+                    let predicate = rows[i].predicate ? rows[i].predicate["value"] : null ;
+                    let object = rows[i].object ? rows[i].object["value"] : null ;
+                    let row = [subject, predicate, object];
+                    addRows.push(row);
+                };
+                data.addRows(addRows);
+
+                let options = {
+                    page: 'enable', // ページ分割を有効
+                    pageSize: 10,    // 1 ページの項目数
+                    showRowNumber: true,
+                    allowHtml: true,
+                };
+                
+                let table = new google.visualization.Table(document.getElementById('triples'));
+                table.draw(data, options);
+
+                // 選択した行の値を取得する
+                google.visualization.events.addListener(table, 'select', function() { // 参考情報: https://developers.google.com/chart/interactive/docs/reference#visgetselection
+                    if (document.getElementById('keyword-plus-triple')){
+                        document.getElementById('keyword-plus-triple').remove();
+                    }; // 初期化
+                    let selection = table.getSelection(); // 選択したものが取得される
+                    let selected_cells = [];
+                    for (let i=0; i < selection.length; i++){
+                        let item = selection[i];
+                        let values = {
+                                "subject": data.getValue(item.row, 0),
+                                "predicate": data.getValue(item.row,1),
+                                "object": data.getValue(item.row,2),
+                            };
+                        selected_cells.push(values);
+                        };
+                    let input_values ={
+                        keyword: document.getElementById('keyword').value,
+                        selected_cells: selected_cells,
+                    };
+                    
+                    if (input_values.keyword == ''){
+                        alert('Keyword is empty!');
+                    };
+
+                    console.log(input_values);
+                    let html = 
+                    `
+                    <form method='post' action='/search/result' id='keyword-plus-triple'>
+                        <input type='hidden' name='keyword_plus_entity' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        <input type='submit' value='Filter' class='btn btn-primary'>
+                    </form>
+                    `;
+                    document.getElementById('triples').insertAdjacentHTML('afterend', html); 
                 });
             };
         </script>
