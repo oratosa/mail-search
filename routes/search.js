@@ -6,6 +6,7 @@ const documentSearchQueryGenerator = require('../my_modules/documentSearchQueryG
 const personSearchQueryGenerator = require('../my_modules/personSearchQueryGenerator.js');
 const entitySearchQueryGenerator = require('../my_modules/entitySearchQueryGenerator.js');
 const filterDocumentByPeopleQueryGenerator = require('../my_modules/filterDocumentByPeopleQueryGenerator.js');
+const filterDocumentByEntityQueryGenerator = require('../my_modules/filterDocumentByEntityQueryGenerator.js');
 const fetch = require('node-fetch');
 
 const headers = {
@@ -55,6 +56,34 @@ router.post('/result', (req, res1, next) => {
         let keyword = input["keyword"];
         let selected_cells = input['selected_cells'];
         let query = filterDocumentByPeopleQueryGenerator(keyword, selected_cells);
+        let options = {
+            method: 'POST',
+            headers: headers,
+            body: query,
+        };
+        fetch(endpoint,options)
+            .then(res2 => {if (!res2.ok) {
+            // 200 系以外のレスポンスはエラーとして処理
+                throw new Error(`${res2.status} ${res2.statusText}`);
+            }
+                return res2.json();
+            })
+            .then(json => {
+                console.log(JSON.stringify(json));
+                data = {
+                    title: 'ML Search',
+                    keyword: keyword,
+                    head: json.head,
+                    results: json.results,
+                };
+                res1.render('result', data)
+            })
+            .catch(err => console.error(err));
+    }else if (req.body['keyword_plus_entity']){
+        let input = JSON.parse(req.body['keyword_plus_entity']); // JSONにパースする必要ある
+        let keyword = input["keyword"];
+        let selected_cells = input['selected_cells'];
+        let query = filterDocumentByEntityQueryGenerator(keyword, selected_cells);
         let options = {
             method: 'POST',
             headers: headers,
