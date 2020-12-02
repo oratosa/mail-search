@@ -175,7 +175,7 @@
                 });
             };
         </script>
-        <script type="text/javascript">
+        <script type="text/javascript"> // fetchする処理 //
             async function postData(url = '', data = {}) {
                 const response = await fetch(url, {
                     method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -270,7 +270,7 @@
                         <input type='submit' value='Filter' class='btn btn-primary'>
                     </form>
                     `;
-                    document.getElementById('relevant_entity').insertAdjacentHTML('afterend', html); 
+                    document.getElementById('relevant_entities').insertAdjacentHTML('afterend', html); 
                 });
             };
         </script>
