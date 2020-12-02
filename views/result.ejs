@@ -243,6 +243,9 @@
                     if (document.getElementById('keyword-plus-entity')){
                         document.getElementById('keyword-plus-entity').remove();
                     }; // 初期化
+                    if (document.getElementById('detail-infomation')){
+                        document.getElementById('detail-infomation').remove();
+                    }; // 初期化
                     let selection = table.getSelection(); // 選択したものが取得される
                     let selected_cells = [];
                     for (let i=0; i < selection.length; i++){
@@ -269,6 +272,12 @@
                         <input type='hidden' name='keyword_plus_entity' value='` + JSON.stringify(input_values) + `' class='form-control'>
                         <input type='submit' value='Filter' class='btn btn-primary'>
                     </form>
+                    <form id='detail-infomation'>
+                        <input type="hidden" name="entities" id="entities" value='` + JSON.stringify(input_values) + `'>
+                        <input type='button' value='Get Entity Details' class='btn btn-primary' onclick="clickBtn3()">
+                    </form>
+                    <div id='triples'>
+                    </div>
                     `;
                     document.getElementById('relevant_entities').insertAdjacentHTML('afterend', html); 
                 });
