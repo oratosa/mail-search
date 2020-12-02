@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-        <title><%= title %></title>
+        <title>Document Search with RDF KB</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin='anonymous'>
         <link rel='stylesheet' href='/stylesheets/style.css'/>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -10,22 +10,20 @@
     <body id='container'>
         <!-- サービス名 -->
         <header>
-            <h1 class='display-4'>
-                <%= title %>
-            </h1>
+            <h1>Document Search with RDF KB</h1>
         </header>
         <!-- 文書検索機能 -->
         <section id='search'>
-            <h4 class="text text-primary">
-                Input Keywords
-            </h4>
             <form method='post' action='/search/result'>
-                <input type='text' name='keyword' id='keyword' value='<%= keyword %>' class='form-control' required>
+                <div class="form-group">
+                    <h5>Input Keywords</h5>
+                    <input type='text' name='keyword' id='keyword' value='<%= keyword %>' class='form-control' required>
+                </div>
                 <input type='submit' value='Search' class='btn btn-primary'>
             </form>
+            <h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>
         </section>
         <!-- 文書検索結果 -->
-        <h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>
         <section id='result'>
         </section>
     <!-- javascript -->
@@ -363,7 +361,7 @@
                     let html = 
                     `
                     <form method='post' action='/search/result' id='keyword-plus-triple'>
-                        <input type='hidden' name='keyword_plus_entity' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        <input type='hidden' name='keyword_plus_triple' value='` + JSON.stringify(input_values) + `' class='form-control'>
                         <input type='submit' value='Filter' class='btn btn-primary'>
                     </form>
                     `;

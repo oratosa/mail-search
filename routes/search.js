@@ -6,6 +6,7 @@ const ejs = require('ejs');
 const documentSearchQueryGenerator = require('../my_modules/documentSearchQueryGenerator.js');
 const filterDocumentByPeopleQueryGenerator = require('../my_modules/filterDocumentByPeopleQueryGenerator.js');
 const filterDocumentByEntityQueryGenerator = require('../my_modules/filterDocumentByEntityQueryGenerator.js');
+const filterDocumentByTripleQueryGenerator = require('../my_modules/filterDocumentByTripleQueryGenerator.js');
 
 // 関連情報取得クエリ生成器
 const personSearchQueryGenerator = require('../my_modules/personSearchQueryGenerator.js');
@@ -22,11 +23,7 @@ const headers = {
 const endpoint = 'http://localhost:3030/w3c-email/query';
 
 router.get('/', (req, res, next) => {
-    var data = {
-        title: 'ML Search',
-        content: "Input keywords",
-    };
-    res.render('search', data);
+    res.render('search');
 });
 
 router.post('/result', (req, res1, next) => {
@@ -48,7 +45,6 @@ router.post('/result', (req, res1, next) => {
             .then(json => {
                 console.log(JSON.stringify(json));
                 data = {
-                    title: 'ML Search',
                     keyword: keyword,
                     head: json.head,
                     results: json.results,
@@ -76,7 +72,6 @@ router.post('/result', (req, res1, next) => {
             .then(json => {
                 console.log(JSON.stringify(json));
                 data = {
-                    title: 'ML Search',
                     keyword: keyword,
                     head: json.head,
                     results: json.results,
@@ -104,7 +99,33 @@ router.post('/result', (req, res1, next) => {
             .then(json => {
                 console.log(JSON.stringify(json));
                 data = {
-                    title: 'ML Search',
+                    keyword: keyword,
+                    head: json.head,
+                    results: json.results,
+                };
+                res1.render('result', data)
+            })
+            .catch(err => console.error(err));
+    }else if (req.body['keyword_plus_triple']){
+        let input = JSON.parse(req.body['keyword_plus_triple']); // JSONにパースする必要ある
+        let keyword = input["keyword"];
+        let selected_cells = input['selected_cells'];
+        let query = filterDocumentByTripleQueryGenerator(keyword, selected_cells);
+        let options = {
+            method: 'POST',
+            headers: headers,
+            body: query,
+        };
+        fetch(endpoint,options)
+            .then(res2 => {if (!res2.ok) {
+            // 200 系以外のレスポンスはエラーとして処理
+                throw new Error(`${res2.status} ${res2.statusText}`);
+            }
+                return res2.json();
+            })
+            .then(json => {
+                console.log(JSON.stringify(json));
+                data = {
                     keyword: keyword,
                     head: json.head,
                     results: json.results,

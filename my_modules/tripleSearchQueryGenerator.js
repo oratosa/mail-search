@@ -50,7 +50,7 @@ function tripleSearchQueryGenerator(selected_cells, files){
     // すべてのクエリの節を結合し，一つの文書検索クエリを生成する
     let query = prefix + select + unions.join('UNION') + end;
     
-    console.log(query);
+    // console.log(query);
     return query;
 }
 
