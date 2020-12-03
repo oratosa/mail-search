@@ -17,7 +17,7 @@ function entitySearchQueryGenerator(files){
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `;
     let select = `
-                    SELECT distinct ?anchorText ?entity (count(?triple) as ?numberOfContexts) 
+                    SELECT distinct ?anchorText ?entity (count(distinct ?triple) as ?numberOfContexts) 
                     WHERE{
                     ?email1 schema:mentions ?mention.
                     ?mention nif:isString ?anchorText.
