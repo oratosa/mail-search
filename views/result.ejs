@@ -244,6 +244,10 @@
                     if (document.getElementById('detail-infomation')){
                         document.getElementById('detail-infomation').remove();
                     }; // 初期化
+                    if (document.getElementById('triples')){
+                        document.getElementById('triples').remove();
+                    }; // もし前に表示したテーブルが残っていれば削除する
+
                     let selection = table.getSelection(); // 選択したものが取得される
                     let selected_cells = [];
                     for (let i=0; i < selection.length; i++){
@@ -332,7 +336,7 @@
                 let table = new google.visualization.Table(document.getElementById('triples'));
                 table.draw(data, options);
 
-                // 選択した行の値を取得する
+                // 選択した行の値を取得するボタンを表示する
                 google.visualization.events.addListener(table, 'select', function() { // 参考情報: https://developers.google.com/chart/interactive/docs/reference#visgetselection
                     if (document.getElementById('keyword-plus-triple')){
                         document.getElementById('keyword-plus-triple').remove();
@@ -365,7 +369,7 @@
                         <input type='submit' value='Filter' class='btn btn-primary'>
                     </form>
                     `;
-                    document.getElementById('triples').insertAdjacentHTML('afterend', html); 
+                    document.getElementById('triples').insertAdjacentHTML('beforeend',html); 
                 });
             };
         </script>
