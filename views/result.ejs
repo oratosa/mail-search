@@ -138,8 +138,13 @@
                 for(let i = 0; i < rows.length; i++){
                     let fromWho = rows[i].fromWho ? rows[i].fromWho["value"] : null ;
                     let toWho = rows[i].toWho ? rows[i].toWho["value"] : null ;
-                    let row = [fromWho, toWho];
-                    addRows.push(row);
+                    if (toWho == null){
+                        let row = [{v:fromWho, f:fromWho.substring(47)}, {v:toWho, f:toWho}];
+                        addRows.push(row);
+                    }else{
+                        let row = [{v:fromWho, f:fromWho.substring(47)}, {v:toWho, f:toWho.substring(47)}];
+                        addRows.push(row);
+                    };
                 };
                 data.addRows(addRows);
 
@@ -242,9 +247,18 @@
                     showRowNumber: true,
                     allowHtml: true,
                 };
-                
+
+                let formatter1 = new google.visualization.PatternFormat('<a href="{1}">{2}</a>');
+                formatter1.format(data, [0,1,2,3,4], 1);
+                let formatter2 = new google.visualization.PatternFormat('<a href="{3}">{3}</a>');
+                formatter2.format(data, [0,1,2,3,4], 3);
+
+                // 1,2,4,5列のみ表示するように DataView を作成
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0,1,3,4]);
+
                 let table = new google.visualization.Table(document.getElementById('relevant_entities'));
-                table.draw(data, options);
+                table.draw(view, options);
 
                 // 選択した行の値を取得する
                 google.visualization.events.addListener(table, 'select', function() { // 参考情報: https://developers.google.com/chart/interactive/docs/reference#visgetselection
@@ -331,7 +345,7 @@
                     let subject = rows[i].subject ? rows[i].subject["value"] : null ;
                     let predicate = rows[i].predicate ? rows[i].predicate["value"] : null ;
                     let object = rows[i].object ? rows[i].object["value"] : null ;
-                    let row = [subject, predicate, object];
+                    let row = [{v:subject,f:subject.substring(47)}, {v:predicate, f:predicate.substring(47)}, {v:object, f:object.match('http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/') ? object.substring(47) : object}];
                     addRows.push(row);
                 };
                 data.addRows(addRows);
