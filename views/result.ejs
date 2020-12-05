@@ -212,7 +212,9 @@
                 let data = new google.visualization.DataTable();
                 data.addColumn('string',json.head.vars[0]); // ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする
                 data.addColumn('string',json.head.vars[1]);
-                data.addColumn('number',json.head.vars[2]);
+                data.addColumn('string',json.head.vars[2]);
+                data.addColumn('string',json.head.vars[3]);
+                data.addColumn('number',json.head.vars[4]);
                 
                 // JSONで取得したデータを整形する
                 let rows = json.results.bindings; // ejsで渡されたデータを呼び込む
@@ -220,8 +222,10 @@
                 for(let i = 0; i < rows.length; i++){
                     let anchorText = rows[i].anchorText ? rows[i].anchorText["value"] : null ;
                     let entity = rows[i].entity ? rows[i].entity["value"] : null ;
+                    let entityLabel = rows[i].entityLabel ? rows[i].entityLabel["value"] : null ;
+                    let type = rows[i].class ? rows[i].class["value"] : null ;
                     let numberOfContexts = rows[i].numberOfContexts ? rows[i].numberOfContexts["value"] : null ;
-                    let row = [anchorText, entity, Number(numberOfContexts)];
+                    let row = [anchorText, entity, entityLabel, type, Number(numberOfContexts)];
                     addRows.push(row);
                 };
                 data.addRows(addRows);
