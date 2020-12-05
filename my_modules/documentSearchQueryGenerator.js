@@ -17,7 +17,7 @@ function documentSearchQueryGenerator(keyword){
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `
     let select = `
-                    SELECT distinct ?file ?headline (isLiteral(?anchorText) as ?keywordHitsEntity) ?entity
+                    SELECT distinct ?file ?headline (isLiteral(?anchorText) as ?keywordHitsEntity) ?entity ?entityLabel
                     WHERE{
                     {?email schema:alternateName ?file;
                             schema:headline ?headline;
@@ -27,7 +27,8 @@ function documentSearchQueryGenerator(keyword){
                     OPTIONAL{?email schema:mentions ?mention.
                                 ?mention nif:isString ?anchorText.
                                 FILTER regex(?anchorText,'`+ keyword +`', 'i')
-                                ?mention itsrdf:taIdentRef ?entity.}
+                                ?mention itsrdf:taIdentRef ?entity.
+                                ?entity rdfs:label ?entityLabel.}
                         }
                     }ORDER BY DESC (?anchorText)
                     `

@@ -17,7 +17,7 @@ function filterDocumentByTripleQueryGenerator(keyword, selected_cells){ //select
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `
     let select =`
-                    SELECT distinct ?file ?headline (isLiteral(?anchorText) as ?keywordHitsEntity) ?entity
+                    SELECT distinct ?file ?headline (isLiteral(?anchorText) as ?keywordHitsEntity) ?entity ?entityLabel
                     WHERE{
                 `;
 
@@ -30,7 +30,8 @@ function filterDocumentByTripleQueryGenerator(keyword, selected_cells){ //select
                     OPTIONAL{?email schema:mentions ?mention.
                                 ?mention nif:isString ?anchorText.
                                 FILTER regex(?anchorText,'`+ keyword +`', 'i')
-                                ?mention itsrdf:taIdentRef ?entity.}
+                                ?mention itsrdf:taIdentRef ?entity.
+                                ?entity rdfs:label ?entityLabel.}
                     }
                     `
     let orderby = `
