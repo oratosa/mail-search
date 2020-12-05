@@ -21,12 +21,12 @@
                 </div>
                 <input type='submit' value='Search' class='btn btn-primary'>
             </form>
-            <h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>
         </section>
         <!-- 文書検索結果 -->
         <section id='result'>
+            <h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>
         </section>
-    <!-- javascript -->
+        <!-- javascript -->
         <script type="text/javascript"> // * 1 * キーワード検索による文書検索結果を表示するための処理 //
             google.load('visualization', '1', {packages:['table']});
             google.setOnLoadCallback(drawDocumentSearchResultTable);
@@ -77,18 +77,19 @@
 
                 html = 
                 `
-                <form id='relevant_infomation'>
-                    <input type="hidden" name="files" id="files" value=` + files + `>
-                    <input type='button' value='Get Relevant People' class='btn btn-primary' onclick="clickBtn1()">
-                    <input type='button' value='Get Relevant Entities' class='btn btn-primary' onclick="clickBtn2()">
-                </form>
-                <div id='relevant_people'>
-                </div>
-                <div id='relevant_entities'>
+                <div>
+                    <form id='relevant_infomation'>
+                        <input type="hidden" name="files" id="files" value=` + files + `>
+                        <input type='button' value='Get Relevant People' class='btn btn-primary' onclick="clickBtn1()">
+                        <input type='button' value='Get Relevant Entities' class='btn btn-primary' onclick="clickBtn2()">
+                    </form>
+                    <div id='relevant_people'></div>
+                    <div id='relevant_entities'></div>
                 </div>
                 `;
 
                 document.getElementById('result').insertAdjacentHTML('afterend', html);
+                document.getElementById('result').insertAdjacentHTML('afterbegin', '<h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>');
 
             };
         </script>
@@ -119,6 +120,7 @@
                         // テーブル作成
                         google.load('visualization', '1', {packages:['table']});
                         google.setOnLoadCallback(drawPeopleResultTable(data1));
+                        document.getElementById('relevant_people').insertAdjacentHTML('afterbegin', '<h2 class="text text-success"> Who responded to who? </h2>');
 
                     })
                     .catch(function(err1) { //失敗時に実行される
@@ -190,7 +192,7 @@
                         <input type='submit' value='Filter' class='btn btn-primary'>
                     </form>
                     `;
-                    document.getElementById('relevant_people').insertAdjacentHTML('afterend', html); 
+                    document.getElementById('relevant_people').insertAdjacentHTML('beforeend', html); 
                 });
             };
         </script>
