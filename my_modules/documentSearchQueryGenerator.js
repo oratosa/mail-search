@@ -17,7 +17,7 @@ function documentSearchQueryGenerator(keyword){
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `
     let select = `
-                    SELECT distinct ?file ?headline ?anchorText ?entity
+                    SELECT distinct ?file ?headline (isLiteral(?anchorText) as ?keywordHitsEntity) ?entity
                     WHERE{
                     {?email schema:alternateName ?file;
                             schema:headline ?headline;
@@ -40,17 +40,6 @@ function documentSearchQueryGenerator(keyword){
 
     // すべてのクエリの節を結合し，一つの文書検索クエリを生成する
 
-    /*
-    if (keyword == ''){
-        let query = prefix + select.replace('?anchorText ?entity','') + filter.join('\n') + optional;
-        console.log(query);
-        return query;
-    }else{
-        let query = prefix + select + filter.join('\n') + optional;
-        console.log(query);
-        return query;
-    }
-    */
     let query = prefix + select + filter.join('\n') + optional;
 
     console.log(query);

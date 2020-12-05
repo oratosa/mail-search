@@ -17,7 +17,7 @@ function filterDocumentByPeopleQueryGenerator(keyword, selected_cells){ //select
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `
     let select =`
-                    SELECT distinct ?file ?headline ?anchorText ?entity
+                    SELECT distinct ?file ?headline (isLiteral(?anchorText) as ?keywordHitsEntity) ?entity
                     WHERE{
                 `;
 

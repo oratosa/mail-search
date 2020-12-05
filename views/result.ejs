@@ -34,10 +34,10 @@
             function drawDocumentSearchResultTable() {
                 // テーブルの設定
                 let data = new google.visualization.DataTable();
-                data.addColumn('string','<%- head.vars[0] %>'); // ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする
-                data.addColumn('string','<%- head.vars[1] %>');
-                data.addColumn('string','<%- head.vars[2] %>');
-                data.addColumn('string','<%- head.vars[3] %>');
+                data.addColumn('string','<%- head.vars[0] %>'); // file (ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする)
+                data.addColumn('string','<%- head.vars[1] %>'); // headline
+                data.addColumn('boolean','<%- head.vars[2] %>'); // keywordHitsEntity
+                data.addColumn('string','<%- head.vars[3] %>'); // entity
                 
                 // JSONで取得したデータを整形する
                 let rows = <%- JSON.stringify(results.bindings) %>; // ejsで渡されたデータを呼び込む
@@ -47,9 +47,9 @@
                     let file = rows[i].file ? rows[i].file["value"] : null ;
                     files.push(file);
                     let headline = rows[i].headline ? rows[i].headline["value"] : null ;
-                    let anchorText = rows[i].anchorText ? rows[i].anchorText["value"] : null ;
+                    let keywordHitsEntity = rows[i].keywordHitsEntity ? rows[i].keywordHitsEntity["value"] : null ;
                     let entity = rows[i].entity ? rows[i].entity["value"] : null ;
-                    let row = [file, headline, anchorText, entity];
+                    let row = [file, headline, Boolean(keywordHitsEntity), entity];
                     addRows.push(row);
                 };
                 data.addRows(addRows);
