@@ -49,8 +49,7 @@ function documentSearchQueryGenerator(keyword){
 
     let query = prefix + select + filterForText.join('\n') + optional + `FILTER(` + filterForEntity.join('||') + `)` + orderby;
 
-    console.log(query);
-
+    // console.log(query);
     return query;
 }
 

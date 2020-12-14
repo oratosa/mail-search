@@ -28,20 +28,22 @@ function filterDocumentByPeopleQueryGenerator(keyword, selected_cells){ //select
 
     let optional = `
                     OPTIONAL{?email schema:mentions ?mention.
-                                ?mention nif:isString ?anchorText.
-                                FILTER regex(?anchorText,'`+ keyword +`', 'i')
+                            ?mention nif:isString ?anchorText.
+                            OPTIONAL{
                                 ?mention itsrdf:taIdentRef ?entity.
-                                ?entity rdfs:label ?entityLabel.}
-                        }
-                    `
+                                ?entity rdfs:label ?entityLabel.
+                            }
+                    `;
     let orderby = `
-                    }ORDER BY DESC (?anchorText)
-                    `
+                    }ORDER BY DESC (?keywordHitsEntity) DESC (?entityLabel) DESC (?file)
+                    `;
     // 検索キーワードを分解して単語ごとにテキスト検索をする節をつくる
     let keyword_list = keyword.split(/\s/);
-    let filter = [];
+    let filterForText = [];
+    let filterForEntity = [];
     for (let word of keyword_list){
-        filter.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForText.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForEntity.push(`regex(?anchorText,'`+ word +`','i')`)
     };
 
     // UNION句をリクエストされたセルの数だけ作る
@@ -50,7 +52,7 @@ function filterDocumentByPeopleQueryGenerator(keyword, selected_cells){ //select
         let sender1 = cell["fromWho"] ? '?email schema:sender <' + cell["fromWho"] + '> . ' : '';
         let sender2 = cell["toWho"] ? ` ?email email:References ?email2.
                                         ?email2 schema:sender <` + cell["toWho"] + '> . ' : '';
-        let union = where + sender1 + filter.join('\n') + sender2 + optional;
+        let union = where + sender1 + filterForText.join('\n') + sender2 + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
         unions.push(union);
         } 
 

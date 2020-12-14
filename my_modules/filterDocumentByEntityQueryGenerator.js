@@ -59,7 +59,7 @@ function filterDocumentByEntityQueryGenerator(keyword, selected_cells){ //select
     // すべてのクエリの節を結合し，一つの文書検索クエリを生成する
     let query = prefix + select + unions.join('UNION') + orderby;
 
-    console.log(query);
+    // console.log(query);
     return query;
 };
 
