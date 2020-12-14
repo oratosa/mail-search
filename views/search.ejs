@@ -11,14 +11,13 @@
         <header>
             <h1>Document Search with RDF KB</h1>
         </header>
-        <section class='search'>
-            <form method='post' action='/search/result'>
-                <div class="form-group">
-                    <h5>Input Keywords</h5>
-                    <input type='text' name='keyword' id='keyword' class='form-control' required>
-                </div>
+        <form class="form-group" method='post' action='/search/result'>
+            <div class="mb-3">
+                <input type='text' placeholder="Input Keywords" name='keyword' id='keyword' class='form-control' required>
+            </div>
+            <div class="mb-3">
                 <input type='submit' value='Search' class='btn btn-primary'>
-            </form>
-        </section>
+            </div>
+        </form>
     </body>
 </html>

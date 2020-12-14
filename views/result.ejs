@@ -13,18 +13,19 @@
             <h1>Document Search with RDF KB</h1>
         </header>
         <!-- 文書検索機能 -->
-        <section id='search'>
-            <form method='post' action='/search/result'>
-                <div class="form-group">
-                    <h5>Input Keywords</h5>
-                    <input type='text' name='keyword' id='keyword' value='<%= keyword %>' class='form-control' required>
-                </div>
+        <form class="form-group" method='post' action='/search/result'>
+            <div class="mb-3">
+                <input type='text' value='<%= keyword %>' name='keyword' id='keyword' class='form-control' required>
+            </div>
+            <div class="mb-3">
                 <input type='submit' value='Search' class='btn btn-primary'>
-            </form>
-        </section>
+            </div>
+        </form>
         <!-- 文書検索結果 -->
         <section id='result'>
-            <h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>
+            <div class="mb-3">
+                <h5 class="text text-success"> Search Results: "<%= keyword %>" </h5>
+            </div>
         </section>
         <!-- javascript -->
         <script type="text/javascript"> // * 1 * キーワード検索による文書検索結果を表示するための処理 //
@@ -77,19 +78,25 @@
 
                 html = 
                 `
-                <div>
+                <div class="mb-3">
                     <form id='relevant_infomation'>
-                        <input type="hidden" name="files" id="files" value=` + files + `>
-                        <input type='button' value='Get Relevant People' class='btn btn-primary' onclick="clickBtn1()">
-                        <input type='button' value='Get Relevant Entities' class='btn btn-primary' onclick="clickBtn2()">
+                        <div class="mb-3">
+                            <input type="hidden" name="files" id="files" value=` + files + `>
+                        </div>
+                        <div class="mb-3">
+                            <input type='button' value='Get Relevant People' class='btn btn-primary' onclick="clickBtn1()">
+                        </div>
+                        <div class="mb-3">
+                            <input type='button' value='Get Relevant Entities' class='btn btn-primary' onclick="clickBtn2()">
+                        </div>
                     </form>
-                    <div id='relevant_people'></div>
-                    <div id='relevant_entities'></div>
-                </div>
+                    <div id='relevant_people' class="mb-3"></div>
+                    <div id='relevant_entities' class="mb-3"></div>
+                </div class="mb-3">
                 `;
 
                 document.getElementById('result').insertAdjacentHTML('afterend', html);
-                document.getElementById('result').insertAdjacentHTML('afterbegin', '<h2 class="text text-success"> Search Results: "<%= keyword %>" </h2>');
+                document.getElementById('result').insertAdjacentHTML('afterbegin', '<h5 class="text text-success"> Search Results: "<%= keyword %>" </h5>');
 
             };
         </script>
@@ -120,7 +127,7 @@
                         // テーブル作成
                         google.load('visualization', '1', {packages:['table']});
                         google.setOnLoadCallback(drawPeopleResultTable(data1));
-                        document.getElementById('relevant_people').insertAdjacentHTML('afterbegin', '<h2 class="text text-success"> Who responded to who? </h2>');
+                        document.getElementById('relevant_people').insertAdjacentHTML('afterbegin', '<h5 class="text text-success"> Relevant People. </h5>');
 
                     })
                     .catch(function(err1) { //失敗時に実行される
@@ -188,8 +195,12 @@
                     let html = 
                     `
                     <form method='post' action='/search/result' id='keyword-plus-people'>
-                        <input type='hidden' name='keyword_plus_people' value='` + JSON.stringify(input_values) + `' class='form-control'>
-                        <input type='submit' value='Filter' class='btn btn-primary'>
+                        <div class="mb-3">
+                            <input type='hidden' name='keyword_plus_people' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        </div>
+                        <div class="mb-3">
+                            <input type='submit' value='Filter' class='btn btn-primary'>
+                        </div>
                     </form>
                     `;
                     document.getElementById('relevant_people').insertAdjacentHTML('beforeend', html); 
@@ -213,6 +224,7 @@
                         // テーブル作成
                         google.load('visualization', '1', {packages:['table']});
                         google.setOnLoadCallback(drawEntityResultTable(data1));
+                        document.getElementById('relevant_entities').insertAdjacentHTML('afterbegin', '<h5 class="text text-success"> Relevant Entities. </h5>');
 
                     })
                     .catch(function(err1) { //失敗時に実行される
@@ -297,15 +309,22 @@
                     let html = 
                     `
                     <form method='post' action='/search/result' id='keyword-plus-entity'>
-                        <input type='hidden' name='keyword_plus_entity' value='` + JSON.stringify(input_values) + `' class='form-control'>
-                        <input type='submit' value='Filter' class='btn btn-primary'>
+                        <div class="mb-3">
+                            <input type='hidden' name='keyword_plus_entity' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        </div>
+                        <div class="mb-3">
+                            <input type='submit' value='Filter' class='btn btn-primary'>
+                        </div>
                     </form>
                     <form id='detail-infomation'>
-                        <input type="hidden" name="selectedEntities" id="selectedEntities" value='` + JSON.stringify(input_values) + `'>
-                        <input type='button' value='Get Entity Details' class='btn btn-primary' onclick="clickBtn3()">
+                        <div class="mb-3">
+                            <input type="hidden" name="selectedEntities" id="selectedEntities" value='` + JSON.stringify(input_values) + `'>
+                        </div>
+                        <div class="mb-3">
+                            <input type='button' value='Get Entity Details' class='btn btn-primary' onclick="clickBtn3()">
+                        </div>
                     </form>
-                    <div id='triples'>
-                    </div>
+                    <div id='triples' class="mb-3"></div>
                     `;
                     document.getElementById('relevant_entities').insertAdjacentHTML('beforeend', html); 
                 });
@@ -326,6 +345,7 @@
                         // テーブル作成
                         google.load('visualization', '1', {packages:['table']});
                         google.setOnLoadCallback(drawTripleResultTable(data1));
+                        document.getElementById('triples').insertAdjacentHTML('afterbegin', '<h5 class="text text-success"> Contexts of Entities. </h5>');
 
                     })
                     .catch(function(err1) { //失敗時に実行される
@@ -391,8 +411,12 @@
                     let html = 
                     `
                     <form method='post' action='/search/result' id='keyword-plus-triple'>
-                        <input type='hidden' name='keyword_plus_triple' value='` + JSON.stringify(input_values) + `' class='form-control'>
-                        <input type='submit' value='Filter' class='btn btn-primary'>
+                        <div class="mb-3">
+                            <input type='hidden' name='keyword_plus_triple' value='` + JSON.stringify(input_values) + `' class='form-control'>
+                        </div>
+                        <div class="mb-3">
+                            <input type='submit' value='Filter' class='btn btn-primary'>
+                        </div>
                     </form>
                     `;
                     document.getElementById('triples').insertAdjacentHTML('beforeend',html); 
