@@ -23,25 +23,31 @@ function documentSearchQueryGenerator(keyword){
                             schema:headline ?headline;
                             schema:text ?text.
                 `
-    let optional = `
+    let optional =  `
                     OPTIONAL{?email schema:mentions ?mention.
                                 ?mention nif:isString ?anchorText.
-                                FILTER regex(?anchorText,'`+ keyword +`', 'i')
-                                ?mention itsrdf:taIdentRef ?entity.
-                                ?entity rdfs:label ?entityLabel.}
-                        }
-                    }ORDER BY DESC (?anchorText)
+                                OPTIONAL{
+                                    ?mention itsrdf:taIdentRef ?entity.
+                                    ?entity rdfs:label ?entityLabel.
+                                }
+                    `
+    let orderby =   `
+                    }
+                    }
+                    }ORDER BY DESC (?keywordHitsEntity) DESC (?entityLabel) DESC (?file)
                     `
     // 検索キーワードを分解して単語ごとにテキスト検索をする節をつくる
     let keyword_list = keyword.split(/\s/);
-    let filter = [];
+    let filterForText = [];
+    let filterForEntity = [];
     for (let word of keyword_list){
-        filter.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForText.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForEntity.push(`regex(?anchorText,'`+ word +`','i')`)
     }
 
     // すべてのクエリの節を結合し，一つの文書検索クエリを生成する
 
-    let query = prefix + select + filter.join('\n') + optional;
+    let query = prefix + select + filterForText.join('\n') + optional + `FILTER(` + filterForEntity.join('||') + `)` + orderby;
 
     console.log(query);
 

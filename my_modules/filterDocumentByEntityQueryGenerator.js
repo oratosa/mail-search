@@ -28,21 +28,23 @@ function filterDocumentByEntityQueryGenerator(keyword, selected_cells){ //select
 
     let optional = `
                     OPTIONAL{?email schema:mentions ?mention.
-                                ?mention nif:isString ?anchorText.
-                                FILTER regex(?anchorText,'`+ keyword +`', 'i')
+                             ?mention nif:isString ?anchorText.
+                            OPTIONAL{
                                 ?mention itsrdf:taIdentRef ?entity.
-                                ?entity rdfs:label ?entityLabel.}
-                    }
+                                ?entity rdfs:label ?entityLabel.
+                            }
                     `
     let orderby = `
-                    }ORDER BY DESC (?anchorText)
+                    }ORDER BY DESC (?keywordHitsEntity) DESC (?entityLabel) DESC (?file)
                     `
     // 検索キーワードを分解して単語ごとにテキスト検索をする節をつくる
     let keyword_list = keyword.split(/\s/);
-    let filter = [];
+    let filterForText = [];
+    let filterForEntity = [];
     for (let word of keyword_list){
-        filter.push(`FILTER regex(?text,'`+ word +`','i')`)
-    };
+        filterForText.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForEntity.push(`regex(?anchorText,'`+ word +`','i')`)
+    }
 
     // UNION句をリクエストされたセルの数だけ作る
     let unions = [];
@@ -50,14 +52,14 @@ function filterDocumentByEntityQueryGenerator(keyword, selected_cells){ //select
         let selectedAnchorText = cell["anchorText"] ? `?email schema:mentions ?selectedAnchorText.
                                                ?selectedAnchorText nif:isString "` + cell["anchorText"] + `"@en.` : '';
         let selectedEntity = cell["entity"] ? `?selectedAnchorText itsrdf:taIdentRef <` + cell["entity"] + `> . ` : '';
-        let union = where + filter.join('\n') + selectedAnchorText + selectedEntity + optional;
+        let union = where + filterForText.join('\n') + selectedAnchorText + selectedEntity + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
         unions.push(union);
         } 
 
     // すべてのクエリの節を結合し，一つの文書検索クエリを生成する
     let query = prefix + select + unions.join('UNION') + orderby;
 
-    // console.log(query);
+    console.log(query);
     return query;
 };
 
