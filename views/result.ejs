@@ -357,15 +357,17 @@
                 data.addColumn('string',json.head.vars[0]); // ejsで渡されたデータを呼び込み，呼び込んだ結果を''でstringにする
                 data.addColumn('string',json.head.vars[1]);
                 data.addColumn('string',json.head.vars[2]);
+                data.addColumn('string',json.head.vars[3]);
                 
                 // JSONで取得したデータを整形する
                 let rows = json.results.bindings; // ejsで渡されたデータを呼び込む
                 let addRows = [];
                 for(let i = 0; i < rows.length; i++){
+                    let date = rows[i].date ? rows[i].date["value"] : null ;
                     let subject = rows[i].subject ? rows[i].subject["value"] : null ;
                     let predicate = rows[i].predicate ? rows[i].predicate["value"] : null ;
                     let object = rows[i].object ? rows[i].object["value"] : null ;
-                    let row = [{v:subject,f:subject.substring(47)}, {v:predicate, f:predicate.substring(47)}, {v:object, f:object.match('http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/') ? object.substring(47) : object}];
+                    let row = [date, {v:subject,f:subject.substring(47)}, {v:predicate, f:predicate.substring(47)}, {v:object, f:object.match('http://www.kde.cs.tsukuba.ac.jp/~aso/w3c-email/') ? object.substring(47) : object}];
                     addRows.push(row);
                 };
                 data.addRows(addRows);
@@ -390,9 +392,9 @@
                     for (let i=0; i < selection.length; i++){
                         let item = selection[i];
                         let values = {
-                                "subject": data.getValue(item.row, 0),
-                                "predicate": data.getValue(item.row,1),
-                                "object": data.getValue(item.row,2),
+                                "subject": data.getValue(item.row, 1),
+                                "predicate": data.getValue(item.row,2),
+                                "object": data.getValue(item.row,3),
                             };
                         selected_cells.push(values);
                         };

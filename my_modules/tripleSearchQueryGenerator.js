@@ -17,11 +17,12 @@ function tripleSearchQueryGenerator(selected_cells, files){
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `;
     let select = `
-                    SELECT distinct ?subject ?predicate ?object
+                    SELECT distinct (substr(str(?dateSent), 1, 10) as ?date) ?subject ?predicate ?object
                     WHERE{
                  `
     let where = `   {
                     ?email1 schema:mentions ?mention.
+                    ?email1 schema:dateSent ?dateSent.
                     # document
                     ?email1 schema:alternateName ?file.    
                 `;
@@ -32,7 +33,7 @@ function tripleSearchQueryGenerator(selected_cells, files){
                     ?triple rdf:object ?object.
                     }
                     `;
-    let end = `}`;
+    let end = `}ORDER BY (?date)`;
 
     // 検索キーワードを分解して単語ごとにテキスト検索をする節をつくる
     let files_array = files.split(',');
