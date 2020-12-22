@@ -41,13 +41,13 @@ function documentSearchQueryGenerator(keyword){
     let filterForText = [];
     let filterForEntity = [];
     for (let word of keyword_list){
-        filterForText.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForText.push(`regex(?text,'`+ word +`','i')`)
         filterForEntity.push(`regex(?anchorText,'`+ word +`','i')`)
     }
 
     // すべてのクエリの節を結合し，一つの文書検索クエリを生成する
 
-    let query = prefix + select + filterForText.join('\n') + optional + `FILTER(` + filterForEntity.join('||') + `)` + orderby;
+    let query = prefix + select + `FILTER(` + filterForText.join('||') + `)` + optional + `FILTER(` + filterForEntity.join('||') + `)` + orderby;
 
     // console.log(query);
     return query;

@@ -42,7 +42,7 @@ function filterDocumentByEntityQueryGenerator(keyword, selected_cells){ //select
     let filterForText = [];
     let filterForEntity = [];
     for (let word of keyword_list){
-        filterForText.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForText.push(`regex(?text,'`+ word +`','i')`)
         filterForEntity.push(`regex(?anchorText,'`+ word +`','i')`)
     }
 
@@ -52,7 +52,7 @@ function filterDocumentByEntityQueryGenerator(keyword, selected_cells){ //select
         let selectedAnchorText = cell["anchorText"] ? `?email schema:mentions ?selectedAnchorText.
                                                ?selectedAnchorText nif:isString "` + cell["anchorText"] + `"@en.` : '';
         let selectedEntity = cell["entity"] ? `?selectedAnchorText itsrdf:taIdentRef <` + cell["entity"] + `> . ` : '';
-        let union = where + filterForText.join('\n') + selectedAnchorText + selectedEntity + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
+        let union = where + `FILTER(` + filterForText.join('||') + `)` + selectedAnchorText + selectedEntity + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
         unions.push(union);
         } 
 

@@ -43,7 +43,7 @@ router.post('/result', (req, res1, next) => {
                 return res2.json();
             })
             .then(json => {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
                 data = {
                     keyword: keyword,
                     head: json.head,
@@ -70,7 +70,7 @@ router.post('/result', (req, res1, next) => {
                 return res2.json();
             })
             .then(json => {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
                 data = {
                     keyword: keyword,
                     head: json.head,
@@ -97,7 +97,7 @@ router.post('/result', (req, res1, next) => {
                 return res2.json();
             })
             .then(json => {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
                 data = {
                     keyword: keyword,
                     head: json.head,
@@ -124,7 +124,7 @@ router.post('/result', (req, res1, next) => {
                 return res2.json();
             })
             .then(json => {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
                 data = {
                     keyword: keyword,
                     head: json.head,
@@ -152,8 +152,8 @@ router.post('/result/api/person', (req, res1, next) => {
             return res2.json();
         })
         .then(json => {
-            console.log(JSON.stringify(json.head));
-            console.log(JSON.stringify(json.results));
+            // console.log(JSON.stringify(json.head));
+            // console.log(JSON.stringify(json.results));
             data = {
                 head: json.head,
                 results: json.results,
@@ -179,8 +179,8 @@ router.post('/result/api/entity', (req, res1, next) => {
             return res2.json();
         })
         .then(json => {
-            console.log(JSON.stringify(json.head));
-            console.log(JSON.stringify(json.results));
+            // console.log(JSON.stringify(json.head));
+            // console.log(JSON.stringify(json.results));
             data = {
                 head: json.head,
                 results: json.results,
@@ -210,8 +210,8 @@ router.post('/result/api/entity/triple', (req, res1, next) => {
             return res2.json();
         })
         .then(json => {
-            console.log(JSON.stringify(json.head));
-            console.log(JSON.stringify(json.results));
+            // console.log(JSON.stringify(json.head));
+            // console.log(JSON.stringify(json.results));
             data = {
                 head: json.head,
                 results: json.results,

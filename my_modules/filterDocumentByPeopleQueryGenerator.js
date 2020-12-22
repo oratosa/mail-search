@@ -42,7 +42,7 @@ function filterDocumentByPeopleQueryGenerator(keyword, selected_cells){ //select
     let filterForText = [];
     let filterForEntity = [];
     for (let word of keyword_list){
-        filterForText.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForText.push(`regex(?text,'`+ word +`','i')`)
         filterForEntity.push(`regex(?anchorText,'`+ word +`','i')`)
     };
 
@@ -52,7 +52,7 @@ function filterDocumentByPeopleQueryGenerator(keyword, selected_cells){ //select
         let sender1 = cell["fromWho"] ? '?email schema:sender <' + cell["fromWho"] + '> . ' : '';
         let sender2 = cell["toWho"] ? ` ?email email:References ?email2.
                                         ?email2 schema:sender <` + cell["toWho"] + '> . ' : '';
-        let union = where + sender1 + filterForText.join('\n') + sender2 + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
+        let union = where + sender1 + `FILTER(` + filterForText.join('||') + `)` + sender2 + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
         unions.push(union);
         } 
 

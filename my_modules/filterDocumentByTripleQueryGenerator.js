@@ -42,7 +42,7 @@ function filterDocumentByTripleQueryGenerator(keyword, selected_cells){ //select
     let filterForText = [];
     let filterForEntity = [];
     for (let word of keyword_list){
-        filterForText.push(`FILTER regex(?text,'`+ word +`','i')`)
+        filterForText.push(`regex(?text,'`+ word +`','i')`)
         filterForEntity.push(`regex(?anchorText,'`+ word +`','i')`)
     };
 
@@ -62,7 +62,7 @@ function filterDocumentByTripleQueryGenerator(keyword, selected_cells){ //select
                 object = `?triple rdf:object "` + object + `"@en.`;
             }          
         };
-        let union = where + filterForText.join('\n') + mention + triple + subject + predicate + object + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
+        let union = where + `FILTER(` + filterForText.join('||') + `)` + mention + triple + subject + predicate + object + optional + `FILTER(` + filterForEntity.join('||') + `)}}`;
         unions.push(union);
         }
 
