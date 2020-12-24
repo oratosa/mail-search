@@ -20,7 +20,7 @@ const headers = {
     'Accept': 'application/sparql-results+json',
 };
 
-const endpoint = 'http://localhost:3030/w3c-email-q12/query';
+const endpoint = 'http://localhost:3030/w3c-email-q3/query';
 
 router.get('/', (req, res, next) => {
     res.render('search');
