@@ -17,19 +17,19 @@ function entitySearchQueryGenerator(files){
                     PREFIX its: <http://www.w3.org/2005/11/its/rdf#>
                 `;
     let select = `
-                    SELECT distinct ?anchorText ?entity ?entityLabel ?class (count(distinct ?triple) as ?numberOfContexts) 
+                    SELECT distinct ?anchorText ?entity ?entityLabel ?class ?classLabel (count(distinct ?triple) as ?numberOfContexts) 
                     WHERE{
                     ?email1 schema:mentions ?mention.
                     ?mention nif:isString ?anchorText.
-                    # document
                     ?email1 schema:alternateName ?file.    
                 `;
     let optional = `
                     OPTIONAL{?mention itsrdf:taIdentRef ?entity.
                             ?entity rdfs:label ?entityLabel.
-                            ?mention itsrdf:taClassRef ?class.}
+                            ?mention itsrdf:taClassRef ?class.
+                            ?class rdfs:label ?classLabel.}
                     OPTIONAL{?triple marl:describesObject ?mention.}
-                    }GROUP BY ?anchorText ?entity ?entityLabel ?class
+                    }GROUP BY ?anchorText ?entity ?entityLabel ?class ?classLabel
                     ORDER BY DESC(?numberOfContexts)
                     `;
     // 検索キーワードを分解して単語ごとにテキスト検索をする節をつくる

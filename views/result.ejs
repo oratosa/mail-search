@@ -239,7 +239,8 @@
                 data.addColumn('string',json.head.vars[1]);
                 data.addColumn('string',json.head.vars[2]);
                 data.addColumn('string',json.head.vars[3]);
-                data.addColumn('number',json.head.vars[4]);
+                data.addColumn('string',json.head.vars[4]);
+                data.addColumn('number',json.head.vars[5]);
                 
                 // JSONで取得したデータを整形する
                 let rows = json.results.bindings; // ejsで渡されたデータを呼び込む
@@ -249,8 +250,9 @@
                     let entity = rows[i].entity ? rows[i].entity["value"] : null ;
                     let entityLabel = rows[i].entityLabel ? rows[i].entityLabel["value"] : null ;
                     let type = rows[i].class ? rows[i].class["value"] : null ;
+                    let typeLabel = rows[i].classLabel ? rows[i].classLabel["value"] : null ;
                     let numberOfContexts = rows[i].numberOfContexts ? rows[i].numberOfContexts["value"] : null ;
-                    let row = [anchorText, entity, entityLabel, type, Number(numberOfContexts)];
+                    let row = [anchorText, entity, entityLabel, type, typeLabel, Number(numberOfContexts)];
                     addRows.push(row);
                 };
                 data.addRows(addRows);
@@ -263,13 +265,13 @@
                 };
 
                 let formatter1 = new google.visualization.PatternFormat('<a href="{1}">{2}</a>');
-                formatter1.format(data, [0,1,2,3,4], 1);
-                let formatter2 = new google.visualization.PatternFormat('<a href="{3}">{3}</a>');
-                formatter2.format(data, [0,1,2,3,4], 3);
+                formatter1.format(data, [0,1,2,3,4,5], 1);
+                let formatter2 = new google.visualization.PatternFormat('<a href="{3}">{4}</a>');
+                formatter2.format(data, [0,1,2,3,4,5], 3);
 
                 // 1,2,4,5列のみ表示するように DataView を作成
                 var view = new google.visualization.DataView(data);
-                view.setColumns([0,1,3,4]);
+                view.setColumns([0,1,3,5]);
 
                 let table = new google.visualization.Table(document.getElementById('relevant_entities'));
                 table.draw(view, options);
